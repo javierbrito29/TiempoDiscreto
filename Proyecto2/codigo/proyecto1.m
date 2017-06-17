@@ -81,7 +81,7 @@ C2tf_kaya = tf(C_kaya);
 Cr_kaya = C2tf_kaya(1);
 Cy_kaya = C2tf_kaya(2);
 
-
+%%pogjccndf
 
 
 
