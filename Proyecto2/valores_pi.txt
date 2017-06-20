@@ -1,0 +1,5 @@
+Método			Kc		Ti
+
+Arrieta (servo)		8.6999		6.0775
+
+Arrieta (reg)		13.8191		1.5683
