@@ -22,6 +22,7 @@ legend('Modelo segundo orden','Aproximación POMTM','Location','east');
 
 %% Controlador
 
+%PID
 %Metodo de Arrieta servo control
 %Parametros para optimizar IAE en funcion de servo control
 a=0.2268;
@@ -64,6 +65,30 @@ Kc_kaya_reg=(0.98/Kp)*(tau/tm)^0.76;
 Ti_kaya_reg=(tau/0.91)*(tau/tm)^1.05;
 Td_kaya_reg=0.60*tau*(tm/tau)^0.9;
 
+%PI
+%Metodo de Arrieta servo control, optimazacion IAE
+
+a_arrieta_pi_servo=0.2438;
+b_arrieta_pi_servo=0.5305;
+c_arrieta_pi_servo=-1.0299;
+d_arrieta_pi_servo=0.9377;
+e_arrieta_pi_servo=0.4337;
+f_arrieta_pi_servo=0.8714;
+
+Kc_arrieta_pi_servo=(a_arrieta_pi_servo+b_arrieta_pi_servo*((tm/tau)^c_arrieta_pi_servo))/Kp;
+Ti_arrieta_pi_servo=(d_arrieta_pi_servo+e_arrieta_pi_servo*((tm/tau)^f_arrieta_pi_servo))*tau;
+
+%Metodo de Arrieta control regulatorio, optimazacion IAE
+
+a_arrieta_pi_reg=0.4485;
+b_arrieta_pi_reg=0.6494;
+c_arrieta_pi_reg=-1.1251;
+d_arrieta_pi_reg=-0.2551;
+e_arrieta_pi_reg=1.8205;
+f_arrieta_pi_reg=0.4749;
+
+Kc_arrieta_pi_reg=(a_arrieta_pi_reg+b_arrieta_pi_reg*((tm/tau)^c_arrieta_pi_reg))/Kp;
+Ti_arrieta_pi_reg=(d_arrieta_pi_reg+e_arrieta_pi_reg*((tm/tau)^f_arrieta_pi_reg))*tau;
 
 %% Implementación lazo cerrado de control
 
@@ -111,14 +136,3 @@ Hz=c2d(Hs,Ts);
 z=tf('z',Ts);
 %Hz=Hz*z^(-0.4/Ts); %Usar esta linea si hay que agregar tiempo muerto
 Gz=(1-(1/z))*Hz;
-
-
-
-
-
-
-
-
-
-
-
