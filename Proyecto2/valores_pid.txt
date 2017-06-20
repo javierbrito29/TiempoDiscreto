@@ -1,0 +1,9 @@
+Método			Kc		Ti		Td
+
+Kaya (servo)		10.6461		6.2255		0.1735
+
+Kaya (reg)		7.5611		114.7348	0.3312
+
+Arrieta (servo)		10.8528		6.3984		0.1555
+
+Arrieta (reg)		18.1273		0.7625		0.1844
