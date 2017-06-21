@@ -103,7 +103,7 @@ C_kaya_servo = tf(pidstd2(Kc_kaya_servo,Ti_kaya_servo,Td_kaya_servo,10,beta,der_
 C_kaya_reg = tf(pidstd2(Kc_kaya_reg,Ti_kaya_reg,Td_kaya_reg,10,beta,der_r));
 
 C_arrieta_servo = tf(pidstd2(Kc_arrieta_servo,Ti_arrieta_servo,Td_arrieta_servo,10,beta,der_r));
-C_arrireta_reg = tf(pidstd2(Kc_arrieta_reg,Ti_arrieta_reg,Td_arrieta_reg,10,beta,der_r));
+C_arrieta_reg = tf(pidstd2(Kc_arrieta_reg,Ti_arrieta_reg,Td_arrieta_reg,10,beta,der_r));
 
 %% Lazo abierto de control
 
