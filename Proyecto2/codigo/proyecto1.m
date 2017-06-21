@@ -20,9 +20,8 @@ xlabel(['Tiempo (s)']);
 ylabel('Respuesta al impulso');
 legend('Modelo segundo orden','Aproximación POMTM','Location','east');
 
-%% Controlador
+%% Obtención de los parámetros del controlador
 
-%PID
 %Metodo de Arrieta servo control
 %Parametros para optimizar IAE en funcion de servo control
 a=0.2268;
@@ -90,49 +89,36 @@ f_arrieta_pi_reg=0.4749;
 Kc_arrieta_pi_reg=(a_arrieta_pi_reg+b_arrieta_pi_reg*((tm/tau)^c_arrieta_pi_reg))/Kp;
 Ti_arrieta_pi_reg=(d_arrieta_pi_reg+e_arrieta_pi_reg*((tm/tau)^f_arrieta_pi_reg))*tau;
 
-%% Implementación lazo cerrado de control
+%% Obtención del controlador en tiempo continuo
 
 Ts=0.1; % Tiempo de muestreo
 
-%Ganancias derivativas e integrales
-Ki_arrieta_servo=Kc_arrieta_servo/Ti_arrieta_servo; 
-Kd_arrieta_servo=Td_arrieta_servo*Kc_arrieta_servo;
-Ki_arrieta_reg=Kc_arrieta_reg/Ti_arrieta_reg; 
-Kd_arrieta_reg=Td_arrieta_reg*Kc_arrieta_reg;
-Ki_kaya_servo=Kc_kaya_servo/Ti_kaya_servo;
-Kd_kaya_servo=Td_kaya_servo*Kc_kaya_servo;
-Ki_kaya_reg=Kc_kaya_reg/Ti_kaya_reg;
-Kd_kaya_reg=Td_kaya_reg*Kc_kaya_reg;
-
 Tf=10; %filtro derivativo 1/alpha
 beta=0.5; %beta
-alpha=0;   %parte derivativa no tiene peso en el valor deseado r
+der_r=0;   %parte derivativa no tiene peso en el valor deseado r
 
 % Controlador discreto en paralelo, 2 grados de libertad
-C_arrieta_servo=pid2(Kc_arrieta_servo,Ki_arrieta_servo,Kd_arrieta_servo,Tf,beta,alpha,Ts);
-C_arrieta_reg=pid2(Kc_arrieta_reg,Ki_arrieta_reg,Kd_arrieta_reg,Tf,beta,alpha,Ts);
-C_kaya_servo=pid2(Kc_kaya_servo,Ki_kaya_servo,Kd_kaya_servo,Tf,beta,alpha,Ts);
-C_kaya_reg=pid2(Kc_kaya_reg,Ki_kaya_reg,Kd_kaya_reg,Tf,beta,alpha,Ts);
 
-C2tf_arrieta_servo = tf(C_arrieta_servo);
-Cr_arrieta_servo = C2tf_arrieta_servo(1);
-Cy_arrieta_servo = C2tf_arrieta_servo(2);
+C_kaya_servo = tf(pidstd2(Kc_kaya_servo,Ti_kaya_servo,Td_kaya_servo,10,beta,der_r));
+C_kaya_reg = tf(pidstd2(Kc_kaya_reg,Ti_kaya_reg,Td_kaya_reg,10,beta,der_r));
 
-C2tf_arrieta_reg = tf(C_arrieta_reg);
-Cr_arrieta_reg = C2tf_arrieta_reg(1);
-Cy_arrieta_reg = C2tf_arrieta_reg(2);
+C_arrieta_servo = tf(pidstd2(Kc_arrieta_servo,Ti_arrieta_servo,Td_arrieta_servo,10,beta,der_r));
+C_arrireta_reg = tf(pidstd2(Kc_arrieta_reg,Ti_arrieta_reg,Td_arrieta_reg,10,beta,der_r));
 
-C2tf_kaya_servo = tf(C_kaya_servo);
-Cr_kaya_servo = C2tf_kaya_servo(1);
-Cy_kaya_servo = C2tf_kaya_servo(2);
+%% Lazo abierto de control
 
-C2tf_kaya_reg = tf(C_kaya_reg);
-Cr_kaya_reg = C2tf_kaya_reg(1);
-Cy_kaya_reg = C2tf_kaya_reg(2);
+L_kaya_servo=(C_kaya_servo(1))*H;
+L_kaya_reg=(C_kaya_reg(1))*H;
 
-%Equivalente retenedor-planta ERP
-Hs=H/s; 
-Hz=c2d(Hs,Ts);
-z=tf('z',Ts);
-%Hz=Hz*z^(-0.4/Ts); %Usar esta linea si hay que agregar tiempo muerto
-Gz=(1-(1/z))*Hz;
+L_arrieta_servo=(C_arrieta_servo(1))*H;
+L_arrieta_reg=(C_arrieta_reg(1))*H;
+
+
+
+
+
+
+
+
+
+
