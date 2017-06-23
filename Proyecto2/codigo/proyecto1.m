@@ -109,7 +109,7 @@ C_arrieta_pi_servo = tf(pidstd(Kc_arrieta_pi_servo,Ti_arrieta_pi_servo));
 C_arrieta_pi_reg = tf(pidstd(Kc_arrieta_pi_reg,Ti_arrieta_pi_reg));
 
 %%Controlador utilizado basado en PI regulatorio de Arrieta
-C_final=tf(pidstd2(13.8191,1.9683,0.1,10,1,0));
+C_final=tf(pidstd2(10.6461,1,0.04,10,1,0));
 
 %% Lazo abierto de control
 
