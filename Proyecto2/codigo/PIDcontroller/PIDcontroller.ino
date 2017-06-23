@@ -38,11 +38,12 @@ const int oLEDPin = 4;               // *** LED ** Pin de la salida del LED indi
 /*****************/
 // Constantes del PID Digital Kp,Ti,Td y Ts
 /****************/
-float Kp = 10.6461; 
-float Ti = 6.2255;
-float Td = 0.1735;
-float Ts = 0.1;
-float beta = 0.5;
+                     
+float Kp =13.8191;
+float Ti =1.9683; 
+float Td =0.1;    
+float Ts = 0.01;      
+float beta = 1;
 float alpha = 0.1;
 
 /*****************/
@@ -57,19 +58,20 @@ float Kd = (Td)/((alpha*Td)+Ts);
 // Parametros del Sistema
 /****************/
 
-int ValorDeseado;
-int ValorDeseadoAnterior = 0;
-int VariableControlada;
-int VariableManipuladaManual;
-int Modo;
-int SalidaPID=0;
-int Proporcional=0;
-int VariableControladaAnterior=0;
-int Derivativo = 0 ;
-int DerivativoAnterior = 0;
-int Integral = 0;
-int IntegralAnterior = 0;
-int SalidaControlPWM = 0;
+float ValorDeseado=0;
+float ValorDeseadoAnterior = 0;
+float VariableControlada=0;
+float VariableManipuladaManual=0;
+float Modo=0;
+float SalidaPID=0;
+float Proporcional=0;
+float VariableControladaAnterior=0;
+float Derivativo = 0 ;
+float DerivativoAnterior = 0;
+float Integral = 0;
+float IntegralAnterior = 0;
+float SalidaControlPWM = 0;
+
 
 
 /******************/
@@ -77,6 +79,17 @@ int SalidaControlPWM = 0;
 /******************/
 Scheduler RealTimeCore; 
 
+
+/*****************/
+//Se definen las funciones a utilizar
+/****************/
+
+
+void  LeerValores();
+void  CalcularPID();
+void  EscrituraSalidas();
+void  ActualizarValor();
+void  ControladorPID();
 
 /******************************************************/
 //Declaracion de la funcion ControladorPID
@@ -95,7 +108,7 @@ void ControladorPID(){
 /******************************************************/
 
 
-Task LazoCerrado(100, TASK_FOREVER, &ControladorPID, &RealTimeCore); //Tarea que se repite cada 100 milisegundos indefinidamente
+Task LazoCerrado(10, TASK_FOREVER, &ControladorPID, &RealTimeCore); //Tarea que se repite cada 100 milisegundos indefinidamente
 
 
 
@@ -141,14 +154,10 @@ void loop() {
 void LeerValores() {
   //Lectura del Valor deseado
   ValorDeseado= analogRead(iValorDeseadoPin);
-  //Serial.println(ValorDeseado);
   //Lectura de la Variable Controlada
   VariableControlada = analogRead(iVarControladaPin);
-  Serial.println(VariableControlada);
   //Lectura del controlador Manual
   VariableManipuladaManual = analogRead(iVarManiManualPin);
-  //Serial.print(",");
-  //Serial.println(VariableManipuladaManual);
   //Lectura del Modo de operacio
   Modo = digitalRead(iModoPin);
 }
@@ -160,10 +169,11 @@ void CalcularPID() {
   //Implementacion de los calculos de un PID Digital 
   if(Modo){
     SalidaPID = VariableManipuladaManual;
+    Integral = 0;
   }
   else {
     Proporcional = Kp*((beta*ValorDeseado)-VariableControlada);
-    Integral = IntegralAnterior + (Ki*(ValorDeseadoAnterior-VariableControladaAnterior));
+    Integral = IntegralAnterior + (Ki*(ValorDeseadoAnterior-VariableControladaAnterior)); 
     Derivativo = (alpha*Kd*DerivativoAnterior) - (Kp*Kd*(VariableControlada-VariableControladaAnterior));
     SalidaPID = Proporcional + Integral + Derivativo;    
   }
@@ -186,10 +196,10 @@ void CalcularPID() {
 void EscrituraSalidas() {
   //Las salidas de los pines PWM de arduinos de de 8 bits por 
   // lo tanto se debe dividir entre 4 para eliminar 2 bits
-  
-  SalidaControlPWM = (SalidaPID >> 2);
+
+  SalidaControlPWM = (SalidaPID*255.0/1023.0);
   analogWrite(oVarManiPin,SalidaControlPWM);
-  
+
   //Se revisa si es necesario encender o apagar el LED
   // Modo = 1 Led apagado ...... Modo = 0 Led Encendido 
   if(Modo) {
