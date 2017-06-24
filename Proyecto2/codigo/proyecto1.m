@@ -13,10 +13,10 @@ tm=0.4219;
 tau=6.2056;
 Haprox=exp(-tm*s)/(tau*s+1); %Aproximacion Half-Rule (POMTM)
 
-
-step(H,Haprox)
+figure(1)
+step(H,Haprox,'--')
 title('');
-xlabel(['Tiempo (s)']);
+xlabel(['Tiempo (s)','']);
 ylabel('Respuesta al impulso');
 legend('Modelo segundo orden','Aproximación POMTM','Location','east');
 
@@ -105,6 +105,12 @@ C_kaya_reg = tf(pidstd2(Kc_kaya_reg,Ti_kaya_reg,Td_kaya_reg,10,beta,der_r));
 C_arrieta_servo = tf(pidstd2(Kc_arrieta_servo,Ti_arrieta_servo,Td_arrieta_servo,10,beta,der_r));
 C_arrieta_reg = tf(pidstd2(Kc_arrieta_reg,Ti_arrieta_reg,Td_arrieta_reg,10,beta,der_r));
 
+C_arrieta_pi_servo = tf(pidstd(Kc_arrieta_pi_servo,Ti_arrieta_pi_servo));
+C_arrieta_pi_reg = tf(pidstd(Kc_arrieta_pi_reg,Ti_arrieta_pi_reg));
+
+%%Controlador utilizado basado en PI regulatorio de Arrieta
+C_final=tf(pidstd2(10.6461,1,0.04,10,1,0));
+
 %% Lazo abierto de control
 
 L_kaya_servo=(C_kaya_servo(1))*H;
@@ -112,6 +118,21 @@ L_kaya_reg=(C_kaya_reg(1))*H;
 
 L_arrieta_servo=(C_arrieta_servo(1))*H;
 L_arrieta_reg=(C_arrieta_reg(1))*H;
+
+L_arrieta_pi_servo=(C_arrieta_pi_servo)*H;
+L_arrieta_pi_reg=(C_arrieta_pi_reg)*H;
+
+L_final=(C_final(1))*H;
+
+figure(2)
+margin(L_final)
+xlabel('Frecuencia');
+
+figure(3)
+rlocus(L_final)
+title('');
+xlabel(['Eje real','']);
+ylabel('Eje imaginario');
 
 
 
